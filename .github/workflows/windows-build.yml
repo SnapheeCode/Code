@@ -25,7 +25,7 @@ jobs:
 
       - name: Build exe
         run: |
-          python build\\build.py
+          pyinstaller --name sloggers --noconfirm --clean --onefile --windowed --collect-all PySide6 sloggers\\__main__.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -33,4 +33,3 @@ jobs:
           name: sloggers-windows-exe
           path: dist/sloggers.exe
           if-no-files-found: error
-
