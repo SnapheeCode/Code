@@ -1,0 +1,34 @@
+# Общие
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+.DS_Store
+
+# Виртуальные окружения
+.venv/
+venv/
+env/
+
+# IDE/Editor
+.idea/
+.vscode/
+
+# Логи/кэш
+*.log
+.mypy_cache/
+.pytest_cache/
+
+# Сборка
+build/
+dist/
+*.spec
+
+# PyInstaller кеши
+*.manifest
+*.dll
+*.pkg
+*.bundle
+
