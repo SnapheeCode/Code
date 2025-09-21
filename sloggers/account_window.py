@@ -100,8 +100,8 @@ class AccountWindow(QWidget):
 
         self._types_ids = QLineEdit()
         self._types_ids.setPlaceholderText("ID типов работ через запятую, напр. 9,11")
-        self._subjects_ids = QLineEdit()
-        self._subjects_ids.setPlaceholderText("ID предметов через запятую")
+        self._categories_ids = QLineEdit()
+        self._categories_ids.setPlaceholderText("ID предметов через запятую")
 
         self._btn_start = QPushButton("Запустить бота")
         self._btn_stop = QPushButton("Остановить бота")
@@ -129,7 +129,7 @@ class AccountWindow(QWidget):
 
         v2.addWidget(QLabel("Фильтры по ID:"))
         v2.addWidget(self._types_ids)
-        v2.addWidget(self._subjects_ids)
+        v2.addWidget(self._categories_ids)
 
         row3 = QHBoxLayout()
         row3.addWidget(self._btn_start)
@@ -214,8 +214,9 @@ class AccountWindow(QWidget):
         filters = data.get("filters", {})
         if filters.get("types"):
             self._types_ids.setText(",".join(str(i) for i in filters["types"]))
-        if filters.get("subjects"):
-            self._subjects_ids.setText(",".join(str(i) for i in filters["subjects"]))
+        categories = filters.get("categories") or filters.get("subjects")
+        if categories:
+            self._categories_ids.setText(",".join(str(i) for i in categories))
         self._chk_nobids.setChecked(bool(filters.get("noBids", True)))
         self._chk_less3.setChecked(bool(filters.get("less3bids", True)))
         self._chk_contractual.setChecked(bool(filters.get("contractual", True)))
@@ -226,7 +227,7 @@ class AccountWindow(QWidget):
     def _save_settings(self) -> None:
         filters = {
             "types": [s.strip() for s in self._types_ids.text().split(",") if s.strip()],
-            "subjects": [s.strip() for s in self._subjects_ids.text().split(",") if s.strip()],
+            "categories": [s.strip() for s in self._categories_ids.text().split(",") if s.strip()],
             "noBids": self._chk_nobids.isChecked(),
             "less3bids": self._chk_less3.isChecked(),
             "contractual": self._chk_contractual.isChecked(),
@@ -362,7 +363,7 @@ class AccountWindow(QWidget):
     def _fill_filters_from_dict(self, data: dict) -> None:
         # Сохраняем выбранные до перезагрузки
         selected_types = set(s.strip() for s in self._types_ids.text().split(',') if s.strip())
-        selected_cats = set(s.strip() for s in self._subjects_ids.text().split(',') if s.strip())
+        selected_cats = set(s.strip() for s in self._categories_ids.text().split(',') if s.strip())
 
         self._types_list.clear()
         for t in data.get("worktypes", []):
@@ -388,6 +389,6 @@ class AccountWindow(QWidget):
         types = [self._types_list.item(i).data(Qt.UserRole) for i in range(self._types_list.count()) if self._types_list.item(i).isSelected()]
         cats = [self._cats_list.item(i).data(Qt.UserRole) for i in range(self._cats_list.count()) if self._cats_list.item(i).isSelected()]
         self._types_ids.setText(",".join(types))
-        self._subjects_ids.setText(",".join(cats))
+        self._categories_ids.setText(",".join(cats))
         self._save_settings()
         QMessageBox.information(self, "Сохранено", "Фильтры обновлены")

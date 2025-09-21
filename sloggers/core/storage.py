@@ -111,7 +111,7 @@ def load_account_settings(acc_id: str) -> dict:
             "followup_delay_minutes": 5,
             "filters": {
                 "types": [],  # список ID типов работ
-                "subjects": [],  # список ID предметов
+                "categories": [],  # список ID предметов/категорий
                 "noBids": True,
                 "less3bids": True,
                 "contractual": True,
@@ -121,7 +121,12 @@ def load_account_settings(acc_id: str) -> dict:
                 "followup_path": "",  # путь к txt файлу с догоняющим
             },
         }
-    return _read_json(path)
+    data = _read_json(path)
+    filters = data.get("filters", {})
+    # Совместимость со старыми настройками, где ключ назывался "subjects"
+    if "categories" not in filters and "subjects" in filters:
+        filters["categories"] = filters.get("subjects", [])
+    return data
 
 
 def save_account_settings(acc_id: str, data: dict) -> None:
